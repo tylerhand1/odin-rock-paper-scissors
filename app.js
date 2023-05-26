@@ -4,9 +4,6 @@ function getComputerChoice() {
 }
 
 function playRound(playerSelection, computerSelection) {
-    // Convert playerSelection to lower case
-    playerSelection = playerSelection.toLowerCase()
-
     // Convert playerSelection to number for easier comparison
     let playerSelectionNum
     switch(playerSelection) {
@@ -33,10 +30,21 @@ function playRound(playerSelection, computerSelection) {
     }
 }
 
+function game() {
+    let playerSelection = ""
+    for(let i = 0; i < 5; i++) {
+        // Prompt user until valid response
+        do {
+            playerSelection = prompt("Rock, paper, or scissors?")
+            // Convert playerSelection to lower case
+            playerSelection = playerSelection.toLowerCase()
+        } while(!moves.includes(playerSelection))
+
+        let computerSelection = getComputerChoice()
+        console.log(playRound(playerSelection, computerSelection))
+    }
+}
 
 let moves = ["rock", "paper", "scissors"]
 
-let playerSelection = "rock"
-let computerSelection = getComputerChoice()
-
-console.log(playRound(playerSelection, computerSelection))
+game()
