@@ -8,7 +8,7 @@ function playRound(playerSelection, computerSelection) {
     let lose = false
     // Check for tie
     if(playerSelection === computerSelection) {
-        return "Tie!"
+        return -1 // tie
     }
 
     if(playerSelection === "rock") {
@@ -29,25 +29,61 @@ function playRound(playerSelection, computerSelection) {
     }
 
     if(lose) {
-        return "You lose! " + computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1) + " beats " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)
+        return 0 // lose
     }
 
-    return "You win! " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1) + " beats " + computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)
+    return 1 // win
 }
 
 function game(e) {
-    // for(let i = 0; i < 5; i++) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute for getting data-key attribute
-        playerSelection = e.target.getAttribute('data-key')
-        playerSelection = playerSelection.toLowerCase()
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute for getting data-key attribute
+    playerSelection = e.target.getAttribute('data-key')
+    playerSelection = playerSelection.toLowerCase()
 
-        let computerSelection = moves[getComputerChoice()]
-        console.log(playRound(playerSelection, computerSelection))
-    // }
+    let computerSelection = moves[getComputerChoice()]
+    let win = playRound(playerSelection, computerSelection)
+    switch(win) {
+        case -1:
+            break;
+        case 0:
+            document.querySelector('.computer-score').textContent = ++computerScore
+            break;
+        case 1:
+            document.querySelector('.player-score').textContent = ++playerScore
+            break;
+    }
+    if(playerScore === 5 || computerScore === 5) {
+        buttons.forEach(button => button.removeEventListener('click', game))
+        buttons.forEach(button => button.removeAttribute('class'))
+        // Display winner
+        let container = document.querySelector('.score')
+        let resultContainer = document.createElement('div')
+        let result = document.createElement('h3')
+
+        let player = document.querySelector('.player')
+        let computer = document.querySelector('.computer')
+
+        resultContainer.setAttribute('class', 'result')
+
+        if(playerScore === 5) {
+            result.textContent = 'Player wins!'
+        } else {
+            result.textContent = 'Computer wins!'
+        }
+
+        container.removeChild(player)
+        container.removeChild(computer)
+        
+        resultContainer.appendChild(result)
+        container.appendChild(resultContainer)
+    }
 }
 
 let moves = ["rock", "paper", "scissors"]
 
 const buttons = document.querySelectorAll('button')
+
+let playerScore = Number.parseInt(document.querySelector('.player-score').textContent)
+let computerScore = Number.parseInt(document.querySelector('.computer-score').textContent)
 
 buttons.forEach(button => button.addEventListener('click', game))
