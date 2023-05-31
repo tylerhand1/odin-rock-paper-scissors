@@ -5,46 +5,49 @@ function getComputerChoice() {
 
 function playRound(playerSelection, computerSelection) {
     // Convert playerSelection to number for easier comparison
-    let playerSelectionNum
-    switch(playerSelection) {
-        case "rock":
-            playerSelectionNum = 0
-            break
-        case "paper":
-            playerSelectionNum = 1
-            break
-        case "scissors":
-            playerSelectionNum = 2
-            break
-    }
-
+    let lose = false
     // Check for tie
-    if(playerSelectionNum === computerSelection) {
+    if(playerSelection === computerSelection) {
         return "Tie!"
     }
-    // Player wins if their move is "higher" in the array or in the edge case of player plays rock and computer plays scissors
-    if(playerSelectionNum > computerSelection || (playerSelectionNum == 0 && computerSelection == 2)) {
-        return "You win! " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1) + " beats " + moves[computerSelection].charAt(0).toUpperCase() + moves[computerSelection].slice(1)
+
+    if(playerSelection === "rock") {
+        if(computerSelection === "paper") {
+            // Lose
+            lose = true
+        }
+    } else if (playerSelection === "paper") {
+        if(computerSelection === "scissors") {
+            // Lose
+            lose = true
+        }
     } else {
-        return "You lose! " + moves[computerSelection].charAt(0).toUpperCase() + moves[computerSelection].slice(1) + " beats " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)
+        if(computerSelection === "rock") {
+            // Lose
+            lose = true
+        } 
     }
+
+    if(lose) {
+        return "You lose! " + computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1) + " beats " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)
+    }
+
+    return "You win! " + playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1) + " beats " + computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)
 }
 
-function game() {
-    let playerSelection = ""
-    for(let i = 0; i < 5; i++) {
-        // Prompt user until valid response
-        do {
-            playerSelection = prompt("Rock, paper, or scissors?")
-            // Convert playerSelection to lower case
-            playerSelection = playerSelection.toLowerCase()
-        } while(!moves.includes(playerSelection))
+function game(e) {
+    // for(let i = 0; i < 5; i++) {
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute for getting data-key attribute
+        playerSelection = e.target.getAttribute('data-key')
+        playerSelection = playerSelection.toLowerCase()
 
-        let computerSelection = getComputerChoice()
+        let computerSelection = moves[getComputerChoice()]
         console.log(playRound(playerSelection, computerSelection))
-    }
+    // }
 }
 
 let moves = ["rock", "paper", "scissors"]
 
-game()
+const buttons = document.querySelectorAll('button')
+
+buttons.forEach(button => button.addEventListener('click', game))
